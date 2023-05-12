@@ -132,10 +132,10 @@ export class TelemetryService {
           analytics.on('page', (_category, name, properties, _options) => {
             if (properties) {
               if (properties.referrer) {
-                properties.referrer = this.sanitizeDomainURL(properties.referrer);
+                properties.referrer = TelemetryService.sanitizeDomainURL(properties.referrer);
               }
               if (properties.url) {
-                properties.url = this.sanitizeDomainURL(properties.url);
+                properties.url = TelemetryService.sanitizeDomainURL(properties.url);
               }
             }
             this.emitToPipeline('page', {
@@ -169,7 +169,6 @@ export class TelemetryService {
             });
           });
 
-          analytics.sanitizeDomainURL = this.sanitizeDomainURL;
           analytics.addSourceMiddleware(this.middleware);
           // For segment the first call we need to make must be identify().
           // In the calls below we might as well call analytics.identify() and
@@ -306,7 +305,7 @@ export class TelemetryService {
     return (new Date).toISOString();
   }
 
-  sanitizeDomainURL(url) {
+  static sanitizeDomainURL(url) {
     let restByDot: any;
     let firstByDot: string;
     [firstByDot, ...restByDot] = url.split('.');
@@ -326,10 +325,10 @@ export class TelemetryService {
     if (payload && payload.obj && payload.obj.context && payload.obj.context.page) {
       const page = payload.obj.context.page;
       if (page.referrer) {
-        page.referrer = analytics.sanitizeDomainURL(page.referrer);
+        page.referrer = TelemetryService.sanitizeDomainURL(page.referrer);
       }
       if (page.url) {
-        page.url = analytics.sanitizeDomainURL(page.url);
+        page.url = TelemetryService.sanitizeDomainURL(page.url);
       }
     }
     next(payload);
